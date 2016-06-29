@@ -33,7 +33,7 @@ public class ConnectionMySQL {
 	public String getURL() {
 
 		JSONObject jO = new JSONObject();
-		jO = ConfigNiro.getJson();
+		jO = ConfigDBNiro.getJson();
 		serverName = jO.get("serverName").toString();
 		dataBase = jO.get("dataBase").toString();
 		port = jO.get("port").toString();
@@ -74,6 +74,8 @@ public class ConnectionMySQL {
 			return null;
 		}
 	}
+	
+	/*
 
 	private boolean connect(String sql) {
 		try {
@@ -87,30 +89,58 @@ public class ConnectionMySQL {
 		}
 	}
 	
-	private Omim getPhenotype(String gene){
+	*/
+	
+	public Omim getOmimPhenotype(String gene){
+		
+		return new Omim(getComments(gene), getPhenotype(gene));
+		
+		
+	}
+	
+	public String getPhenotype(String gene){
 		
 		try{
 			
-			String sql = "SELECT phenotype_omim, comments_omim FROM OMIM WHERE gene_omim = '" + gene + "';";
+			String sql = "SELECT phenotype_omim FROM OMIM WHERE gene_omim = '" + gene + "';";
 			
 			ResultSet rs = select(sql);
 			
 			rs.absolute(1);
 			
-			Omim o = new Omim(rs.getObject(1).toString(), rs.getObject(2).toString());
-					
-			return o;
+			return rs.getObject(1).toString();
+	
+			
+		} catch (Exception e) {
+		//	e.printStackTrace();
+			
+			return "";
+		}
+		
+
+	}
+	
+	
+	public String getComments(String gene){
+		
+		try{
+			
+			String sql = "SELECT comments_omim FROM OMIM WHERE gene_omim = '" + gene + "';";
+			
+			ResultSet rs = select(sql);
+			
+			rs.absolute(1);
+			
+			return rs.getObject(1).toString();
 			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		//	e.printStackTrace();
+			
+			return "";
 		}
 		
-		
-		
-		
-		
+
 	}
 	
 	
