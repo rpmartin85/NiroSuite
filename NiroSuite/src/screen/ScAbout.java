@@ -17,7 +17,7 @@ import javax.swing.SwingConstants;
 
 public class ScAbout {
 
-	public static JPanel setAbout(JPanel jPAbout, JFrame frame, Rectangle header) {
+	public static JPanel setAbout(JFrame frame, Rectangle header) {
 
 		JLabel lblNiroFull;
 		JLabel lblNiroShort;
@@ -29,7 +29,7 @@ public class ScAbout {
 		JLabel label_7;
 		JLabel label_8;
 
-		
+		JPanel jPAbout = new JPanel();
 
 		jPAbout.setBackground(new Color(255, 255, 255));
 		frame.getContentPane().add(jPAbout);
@@ -63,7 +63,7 @@ public class ScAbout {
 		
 
 		label_7 = new JLabel("Processo FAPESP 2014/20965-3");
-		label_7.setBounds(20, jPAbout.getHeight() - 35, 250, 25);
+		label_7.setBounds(20, jPAbout.getHeight() - 75, 250, 25);
 		jPAbout.add(label_7);
 
 		label_8 = new JLabel("Processo FAPESP 2014/27198-8");
@@ -81,19 +81,6 @@ public class ScAbout {
 				label_7.getY() - label_8.getHeight() / 2 + label_7.getHeight() / 2, label_8.getWidth(),
 				label_8.getHeight());
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 
 		JButton btnFapesp = new JButton("");
 		btnFapesp.addActionListener(new ActionListener() {
@@ -105,7 +92,7 @@ public class ScAbout {
 			}
 		});
 		btnFapesp.setIcon(new ImageIcon(ScStartScreen.class.getResource("/img/lg_fapesp.gif")));
-		btnFapesp.setBounds(46, 400, 124, 28);
+		btnFapesp.setBounds(46, 380, 124, 28);
 		jPAbout.add(btnFapesp);
 
 		JButton btnLabPesq = new JButton("");

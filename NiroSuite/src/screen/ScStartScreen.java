@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
@@ -17,9 +18,12 @@ import java.net.URISyntaxException;
 import java.beans.PropertyChangeEvent;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.Image;
+
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
@@ -32,6 +36,7 @@ public class ScStartScreen {
 	private JFrame frame;
 	private JPanel header;
 	private JPanel selected;
+	private JPanel footer;
 	private JLabel lblCoverage;
 	private JLabel lblAnnotations;
 	private JLabel lblAnalysis;
@@ -42,6 +47,13 @@ public class ScStartScreen {
 	private JLabel lblSettings;
 	private static JPanel jPAbout;
 	private static JPanel jPSettings;
+	private boolean about;
+	private boolean settings;
+	private JLabel lblConnectionOff;
+	private JLabel lblConnectionOn;
+	private ImageIcon statusConn;
+	private boolean connected;
+	private JLabel lblConnect;
 
 	/**
 	 * Launch the application.
@@ -72,10 +84,22 @@ public class ScStartScreen {
 	private void initialize() {
 		frame = new JFrame();
 
-		frame.setUndecorated(true);
+		about = false;
+		settings = false;
+		connected = false;
+
+		// frame.setUndecorated(true);
 
 		frame.getContentPane().setBackground(new Color(230, 230, 230));
 		frame.setBounds(100, 100, 800, 600);
+
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		final Dimension scrnsize = toolkit.getScreenSize();
+		int width = (int) (scrnsize.getWidth() * 0.7);
+		int heigth = (int) (scrnsize.getHeight() * 0.7);
+
+		frame.setBounds((int) ((scrnsize.getWidth() - width) / 2), (int) ((scrnsize.getHeight() - heigth) / 2), width,
+				heigth);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -94,6 +118,12 @@ public class ScStartScreen {
 		header.setBounds(0, 0, 800, 115);
 		frame.getContentPane().add(header);
 		header.setLayout(null);
+
+		footer = new JPanel();
+		footer.setBackground(new Color(37, 35, 144));
+		footer.setBounds(0, frame.getHeight() - 52, frame.getWidth(), 30);
+		frame.getContentPane().add(footer);
+		footer.setLayout(null);
 
 		JLabel lblNirosuite = new JLabel("NiroSuite");
 		lblNirosuite.setFont(new Font("Arial", Font.PLAIN, 27));
@@ -174,19 +204,14 @@ public class ScStartScreen {
 		header.add(selected);
 
 		jPAbout = new JPanel();
-		
-		
 
 		jPAbout.setBackground(new Color(250, 250, 250));
 		frame.getContentPane().add(jPAbout);
 		jPAbout.setLayout(null);
-		
+
 		jPSettings = new JPanel();
 		frame.getContentPane().add(jPSettings);
 		jPSettings.setLayout(null);
-
-		
-		
 
 		selected.setBounds(lblCoverage.getX(), lblCoverage.getY() + lblCoverage.getHeight() + 8, lblCoverage.getWidth(),
 				5);
@@ -195,34 +220,19 @@ public class ScStartScreen {
 		lblAbout.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
-				clearScreen();
 
-				hideHeader();
-
-				jPAbout = ScAbout.setAbout(jPAbout, frame, header.getBounds());
-
-				jPAbout.setBounds(15, header.getHeight() + 15, frame.getWidth() - 30,
-						frame.getHeight() - 30 - header.getHeight());
-
-				jPAbout.setVisible(true);
-				
-				lblAbout.setEnabled(false);
-				
-				
+				showAbout();
 
 			}
 		});
 		lblAbout.setIcon(new ImageIcon(ScStartScreen.class.getResource("/img/aboutButton.png")));
-		lblAbout.setBounds(frame.getWidth() - (45 + (30 * 2) + (20 * 2)), 15, 30, 30);
 		header.add(lblAbout);
 
 		lblContact = new JLabel("");
 		lblContact.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
-				
+
 				Desktop desktop;
 				if (Desktop.isDesktopSupported() && (desktop = Desktop.getDesktop()).isSupported(Desktop.Action.MAIL)) {
 					URI mailto;
@@ -241,15 +251,10 @@ public class ScStartScreen {
 
 					throw new RuntimeException("desktop doesn't support mailto; mail is dead anyway ;)");
 				}
-				
-				
-				
-				
 
 			}
 		});
 		lblContact.setIcon(new ImageIcon(ScStartScreen.class.getResource("/img/contactButton.png")));
-		lblContact.setBounds(frame.getWidth() - (45 + (30 * 1) + (20 * 1)), 15, 30, 30);
 		header.add(lblContact);
 
 		lblExit = new JLabel("");
@@ -261,62 +266,76 @@ public class ScStartScreen {
 			}
 		});
 		lblExit.setIcon(new ImageIcon(ScStartScreen.class.getResource("/img/exitButton.png")));
-		lblExit.setBounds(frame.getWidth() - (45 + (30 * 0) + (20 * 0)), 15, 30, 30);
 		header.add(lblExit);
 
 		lblSettings = new JLabel("");
 		lblSettings.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
-				clearScreen();
 
-				hideHeader();
-				
-				
-				jPSettings = ScSettings.setSettings(jPSettings, frame, header.getBounds());
+				showSettings();
 
-				jPSettings.setBounds(15, header.getHeight() + 15, frame.getWidth() - 30,
-						frame.getHeight() - 30 - header.getHeight());
-
-				jPSettings.setVisible(true);
-				
-				lblSettings.setEnabled(false);
-				
-				
-				
 			}
 		});
 		lblSettings.setIcon(new ImageIcon(ScStartScreen.class.getResource("/img/settingsButton.png")));
-		lblSettings.setBounds(frame.getWidth() - (45 + (30 * 3) + (20 * 3)), 15, 30, 30);
+
 		header.add(lblSettings);
+
+		frame.setMinimumSize(new Dimension(800, 600));
+
+		lblConnectionOff = new JLabel("");
+		lblConnectionOn = new JLabel("");
+		lblConnectionOff.setIcon(new ImageIcon(ScStartScreen.class.getResource("/img/connectionOffButton.png")));
+		lblConnectionOn.setIcon(new ImageIcon(ScStartScreen.class.getResource("/img/connectionOnButton.png")));
+		
+		lblConnect = new JLabel("");
+		lblConnect.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				connected = true;
+				
+				lblConnect.setVisible(!connected);
+				
+				showFooter();
+				
+			}
+		});
+		lblConnect.setBackground(new Color(0,0,0,0));
+		lblConnect.setIcon(new ImageIcon(ScStartScreen.class.getResource("/img/connectButton.png")));
+		
+
+		showMenu();
+
+		showFooter();
 
 		frame.addComponentListener(new ComponentListener() {
 
 			@Override
 			public void componentShown(ComponentEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void componentResized(ComponentEvent e) {
 				// TODO Auto-generated method stub
-
 				header.setBounds(0, 0, frame.getWidth(), header.getHeight());
-
+				showMenu();
+				showFooter();
+				if (about)
+					showAbout();
+				if (settings)
+					showSettings();
 			}
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void componentHidden(ComponentEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 		});
 
@@ -329,6 +348,8 @@ public class ScStartScreen {
 		header.setBounds(0, 0, frame.getWidth(), 115);
 		lblAbout.setEnabled(true);
 		lblSettings.setEnabled(true);
+		about = false;
+		settings = false;
 
 	}
 
@@ -338,4 +359,74 @@ public class ScStartScreen {
 
 	}
 
+	public void showSettings() {
+
+		clearScreen();
+
+		hideHeader();
+
+		jPSettings = ScSettings.setSettings(jPSettings, frame, header.getBounds());
+
+		jPSettings.setBounds(15, header.getHeight() + 15, frame.getWidth() - 30,
+				frame.getHeight() - 30 - header.getHeight());
+
+		jPSettings.setVisible(true);
+
+		lblSettings.setEnabled(false);
+
+		settings = true;
+
+	}
+
+	public void showAbout() {
+
+		clearScreen();
+
+		hideHeader();
+
+		jPAbout = null;
+
+		jPAbout = ScAbout.setAbout(frame, header.getBounds());
+
+		jPAbout.setBounds(15, header.getHeight() + 15, frame.getWidth() - 30,
+				frame.getHeight() - 30 - header.getHeight());
+
+		jPAbout.setVisible(true);
+
+		lblAbout.setEnabled(false);
+
+		about = true;
+
+	}
+
+	public void showMenu() {
+
+		lblSettings.setBounds(frame.getWidth() - (45 + (30 * 3) + (20 * 3)), 15, 30, 30);
+		lblAbout.setBounds(frame.getWidth() - (45 + (30 * 2) + (20 * 2)), 15, 30, 30);
+		lblContact.setBounds(frame.getWidth() - (45 + (30 * 1) + (20 * 1)), 15, 30, 30);
+		lblExit.setBounds(frame.getWidth() - (45 + (30 * 0) + (20 * 0)), 15, 30, 30);
+
+	}
+
+	public void showFooter() {
+
+		footer.setBounds(0, frame.getHeight() - (footer.getHeight() + 20), frame.getWidth(), footer.getHeight());
+
+		lblConnectionOff.setBounds(frame.getWidth() - 35, 0, 30, 30);
+		lblConnectionOn.setBounds(lblConnectionOff.getX(), lblConnectionOff.getY(), lblConnectionOff.getWidth(),
+				lblConnectionOff.getHeight());
+		footer.add(lblConnectionOff);
+		footer.add(lblConnectionOn);
+		
+		
+		
+		lblConnect.setBounds(lblConnectionOff.getX()-40, lblConnectionOff.getY(), 30, 30);
+		footer.add(lblConnect);
+
+		lblConnectionOff.setVisible(!connected);
+		lblConnectionOn.setVisible(connected);
+
+		footer.setVisible(true);
+
+	}
 }
