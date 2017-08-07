@@ -188,6 +188,18 @@ public class ScStartAnno extends JFrame {
 								+ " --includeinfo -withzyg -out " + path2;
 
 						System.out.println(command);
+						
+						//Apagar esse trecho depois
+						
+						setProtocol();
+						
+						String command2 = "perl " + pathAnnovar + "/table_annovar.pl " + path2 + " " + pathAnnovar
+								+ "/humandb/ -buildver hg19 -otherinfo -out  " + path2 + " -remove -protocol "
+								+ protocol + " -operation " + operation;
+						
+						System.out.println(command2);
+						
+						// Fim do trecho para ser apagado
 
 						Execute(command);
 
@@ -704,8 +716,8 @@ public class ScStartAnno extends JFrame {
 		}
 		if (chkSpliceSite.isSelected()) {
 
-			protocol = protocol + "dbscsnv11,";
-			operation = operation + "f,";
+			protocol = protocol + "dbscsnv11,spidex,";
+			operation = operation + "f,f,";
 
 		}
 		if (chkCosmic.isSelected()) {
